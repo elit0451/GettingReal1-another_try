@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using PrettyHair1;
 using System.Data.SqlClient;
+using System.Data;
 
 namespace PrettyHair
 {
@@ -29,7 +30,7 @@ namespace PrettyHair
             {
                 do
                 {
-                    int input = Menu();
+                    int input = ChooseACommand();
                     switch (input)
                     {
                         case 1:
@@ -47,18 +48,14 @@ namespace PrettyHair
                             DB.InsertCustomer(customer);
                             Console.WriteLine("Done");
                             Console.ReadKey();
-
-
                             break;
 
-                           
-
-                        /*  case 2: GetAllCustomers(); break;
-                      case 7: SearchByLastName(); break;
-                      case 9: Customers(); break;
-                    */
+                        case 2: GetAllCustomers(); break;
+                        /* case 7: SearchByLastName(); break;
+                         case 9:
+                             Customers(); break;
+                             */
                         case 10: running = false; break;
-
                     }
                     Console.Clear();
                 } while (running);
@@ -68,16 +65,13 @@ namespace PrettyHair
                 Console.WriteLine("UPS " + e.Message);
                 Console.ReadKey();
             }
-
-            
-
         }
-        private int Menu()
+        private int ChooseACommand()
         {
             Console.WriteLine("Commands:");
             Console.WriteLine("1) Insert new customer");
             Console.WriteLine("2) Get all customers");
-            Console.WriteLine("5) Search customers by phone number");
+            //Console.WriteLine("3) Search customers by phone number");
             Console.WriteLine("10) End program");
             Console.WriteLine();
             Console.WriteLine("Please input your command:");
@@ -121,12 +115,7 @@ namespace PrettyHair
             }
             return IsOnlyInts;
         }
-
-        /* public void InitializeInput()
-         {
-             int y = 
-             InsertCustomer()
-         }*/
+        
         public string InsertCustomer(string parameter)
         {
             string openingSentence = "Enter the " + parameter + " of the customer:";
@@ -164,6 +153,34 @@ namespace PrettyHair
                     break;
             }
             return input;
+        }
+
+        private void GetAllCustomers()
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+                SqlCommand cmdGetAllCustomers = new SqlCommand("GetCustomers", con);
+                cmdGetAllCustomers.CommandType = CommandType.StoredProcedure;
+
+                SqlDataReader reader = cmdGetAllCustomers.ExecuteReader();
+
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        string CustomerLastName = reader["LastName"].ToString();
+                        string CustomerFirstName = reader["FirstName"].ToString();
+                        string CustomerPhoneNumber = reader["Phone"].ToString();
+
+                        Console.WriteLine("First name -" + " " + CustomerFirstName);
+                        Console.WriteLine("Last name -" + " " + CustomerLastName);
+                        Console.WriteLine("Telephone number -" + " " + CustomerPhoneNumber);
+                        Console.WriteLine();
+                    }
+                    Console.ReadKey();
+                }
+            }
         }
     }
 }
