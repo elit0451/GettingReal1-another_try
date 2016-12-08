@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using PrettyHair1;
-
+using System.Data.SqlClient;
 
 namespace PrettyHair
 {
@@ -13,6 +13,10 @@ namespace PrettyHair
         string lastName = "";
         string phone = "";
         Customer customer = new Customer();
+
+        private static string connectionString =
+           "Server=ealdb1.eal.local;Database=EJL67_DB;User ID=ejl67_usr;Password=Baz1nga67";
+
         static void Main(string[] args)
         {
             Program myProgram = new Program();
@@ -20,29 +24,69 @@ namespace PrettyHair
         }
         public void Run()
         {
-            DBcontroler DB = new DBcontroler();
-            firstName = ReadLine("first name");
-            Console.Clear();
-            lastName = ReadLine("last name");
-            Console.Clear();
-            phone = ReadLine("telephone number");
+            bool running = true;
+            try
+            {
+                do
+                {
+                    int input = Menu();
+                    switch (input)
+                    {
+                        case 1:
+                            DBcontroler DB = new DBcontroler();
+                            firstName = InsertCustomer("first name");
+                            Console.Clear();
+                            lastName = InsertCustomer("last name");
+                            Console.Clear();
+                            phone = InsertCustomer("telephone number");
 
-            customer.FirstName = customer.ChangeName(firstName);
-            customer.LastName = customer.ChangeName(lastName);
-            customer.Phone = customer.SplitPhoneNumber(phone);
+                            customer.FirstName = customer.ChangeName(firstName);
+                            customer.LastName = customer.ChangeName(lastName);
+                            customer.Phone = customer.SplitPhoneNumber(phone);
 
-            DB.InsertCustomer(customer);
-            Console.WriteLine("Done");
-            Console.ReadKey();
+                            DB.InsertCustomer(customer);
+                            Console.WriteLine("Done");
+                            Console.ReadKey();
+
+
+                            break;
+
+                           
+
+                        /*  case 2: GetAllCustomers(); break;
+                      case 7: SearchByLastName(); break;
+                      case 9: Customers(); break;
+                    */
+                        case 10: running = false; break;
+
+                    }
+                    Console.Clear();
+                } while (running);
+            }
+            catch (SqlException e)
+            {
+                Console.WriteLine("UPS " + e.Message);
+                Console.ReadKey();
+            }
+
             
-            
 
-            //Console.Clear();
-            //Console.WriteLine("First name -" + " " + customer.ChangeName(firstName));
-            //Console.WriteLine("Last name -" + " " + customer.ChangeName(lastName));
-            //Console.WriteLine("Telephone number -" + " " + customer.SplitPhoneNumber(phone));
-            //Console.ReadKey();
         }
+        private int Menu()
+        {
+            Console.WriteLine("Commands:");
+            Console.WriteLine("1) Insert new customer");
+            Console.WriteLine("2) Get all customers");
+            Console.WriteLine("5) Search customers by phone number");
+            Console.WriteLine("10) End program");
+            Console.WriteLine();
+            Console.WriteLine("Please input your command:");
+            string input = Console.ReadLine();
+            Console.Clear();
+            int inputNum = Convert.ToInt32(input);
+            return inputNum;
+        }
+
         public bool CheckName(string firstname)
         {
             List<char> letters = new List<char> { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'æ', 'ø', 'å' };
@@ -77,7 +121,13 @@ namespace PrettyHair
             }
             return IsOnlyInts;
         }
-        public string ReadLine(string parameter)
+
+        /* public void InitializeInput()
+         {
+             int y = 
+             InsertCustomer()
+         }*/
+        public string InsertCustomer(string parameter)
         {
             string openingSentence = "Enter the " + parameter + " of the customer:";
             string message = "Wrong format! Please try again:";
@@ -91,7 +141,7 @@ namespace PrettyHair
                         Console.WriteLine(message);
                         Console.ReadKey();
                         Console.Clear();
-                        firstName = ReadLine(parameter);
+                        firstName = InsertCustomer(parameter);
                     }
                     break;
                 case "last name":
@@ -100,7 +150,7 @@ namespace PrettyHair
                         Console.WriteLine(message);
                         Console.ReadKey();
                         Console.Clear();
-                        lastName = ReadLine(parameter);
+                        lastName = InsertCustomer(parameter);
                     }
                     break;
                 case "telephone number":
@@ -109,7 +159,7 @@ namespace PrettyHair
                         Console.WriteLine(message);
                         Console.ReadKey();
                         Console.Clear();
-                        phone = ReadLine(parameter);
+                        phone = InsertCustomer(parameter);
                     }
                     break;
             }
