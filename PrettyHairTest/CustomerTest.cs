@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PrettyHair1;
+﻿using PrettyHair1;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 
@@ -76,7 +71,20 @@ namespace PrettyHairTest
             customer.Phone = "223 4094 2";
             Assert.AreEqual("22 34 09 42", customer.SplitPhoneNumber(customer.Phone));
         }
-        
+
+        [TestMethod]
+        public void ShouldNotInsertACustomerIfThePhoneIsTheSame()
+        {
+            customer.Phone = "12 34 56 78";
+            Assert.IsTrue(customer.Exists(customer.Phone));
+        }
+
+        [TestMethod]
+        public void ShouldInsertACustomerIfThePhoneIsDifferent()
+        {
+            customer.Phone = "44 44 44 44";
+            Assert.IsTrue(customer.Exists(customer.Phone));
+        }
 
     }
 }

@@ -5,7 +5,6 @@ namespace PrettyHair1
     public class Customer
     {
         public string Phone { get; set; }
-
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
@@ -16,7 +15,7 @@ namespace PrettyHair1
         public Customer(string firstName, string lastName, string phone)
         {
             FirstName = firstName;
-            LastName= lastName;
+            LastName = lastName;
             Phone = phone;
         }
         public string ChangeName(string name)
@@ -52,7 +51,16 @@ namespace PrettyHair1
             }
             return IsEnoughLength;
         }
-        
+
+        public bool Exists(string phoneInput)
+        {
+            bool custExists = false;
+            if (phoneInput == Phone)
+            {
+                custExists = true;
+            }
+            return custExists;
+        }
     }
 }
 
