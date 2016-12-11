@@ -4,6 +4,8 @@ namespace PrettyHair1
 {
     public class Appointment
     {
+        public DateTime date { get; set; }
+
         public DateTime appointmentDate;
         public string startTime;
         public string endTime;

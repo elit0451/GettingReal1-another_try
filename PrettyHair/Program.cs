@@ -33,13 +33,14 @@ namespace PrettyHair
                     int input = ChooseACommand();
                     switch (input)
                     {
-                        case 1:
+                        case 1: 
+                            
                             DBcontroler DB = new DBcontroler();
-                            firstName = InsertCustomer("first name");
+                            firstName = InsertDataForCust("first name");
                             Console.Clear();
-                            lastName = InsertCustomer("last name");
+                            lastName = InsertDataForCust("last name");
                             Console.Clear();
-                            phone = InsertCustomer("telephone number");
+                            phone = InsertDataForCust("telephone number");
 
                             customer.FirstName = customer.ChangeName(firstName);
                             customer.LastName = customer.ChangeName(lastName);
@@ -116,7 +117,7 @@ namespace PrettyHair
             return IsOnlyInts;
         }
         
-        public string InsertCustomer(string parameter)
+        public string InsertDataForCust(string parameter)
         {
             string openingSentence = "Enter the " + parameter + " of the customer:";
             string message = "Wrong format! Please try again:";
@@ -130,7 +131,7 @@ namespace PrettyHair
                         Console.WriteLine(message);
                         Console.ReadKey();
                         Console.Clear();
-                        firstName = InsertCustomer(parameter);
+                        firstName = InsertDataForCust(parameter);
                     }
                     break;
                 case "last name":
@@ -139,7 +140,7 @@ namespace PrettyHair
                         Console.WriteLine(message);
                         Console.ReadKey();
                         Console.Clear();
-                        lastName = InsertCustomer(parameter);
+                        lastName = InsertDataForCust(parameter);
                     }
                     break;
                 case "telephone number":
@@ -148,7 +149,7 @@ namespace PrettyHair
                         Console.WriteLine(message);
                         Console.ReadKey();
                         Console.Clear();
-                        phone = InsertCustomer(parameter);
+                        phone = InsertDataForCust(parameter);
                     }
                     break;
             }

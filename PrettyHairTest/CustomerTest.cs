@@ -83,7 +83,7 @@ namespace PrettyHairTest
         public void ShouldInsertACustomerIfThePhoneIsDifferent()
         {
             customer.Phone = "44 44 44 44";
-            Assert.IsTrue(customer.Exists(customer.Phone));
+            Assert.IsFalse(customer.Exists(customer.Phone));
         }
 
     }

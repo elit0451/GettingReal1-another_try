@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
 
 namespace PrettyHair1
 {
@@ -7,6 +9,8 @@ namespace PrettyHair1
         public string Phone { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        // Dictionary<string, Customer> listofCustomers = new Dictionary<string, Customer>();
+        public Dictionary<string, Customer> listOfCustomers { get; set; }
 
         public Customer()
         {
@@ -52,14 +56,24 @@ namespace PrettyHair1
             return IsEnoughLength;
         }
 
-        public bool Exists(string phoneInput)
+        public bool Exists(string phone)
         {
+            DBcontroler dbc = new DBcontroler();
             bool custExists = false;
-            if (phoneInput == Phone)
+            List<string> listOfPhonesFromDB = dbc.GetPhonesFromDB();
+            foreach (string phoneNumber in listOfPhonesFromDB)
             {
-                custExists = true;
+                if (phoneNumber == phone)
+                {
+                    custExists = true;
+                }
             }
             return custExists;
+        }
+
+        public void RegisterCustomer(string phone)
+        {
+
         }
     }
 }
