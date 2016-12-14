@@ -10,8 +10,8 @@ namespace PrettyHair1
         public string FirstName { get; set; }
         public string LastName { get; set; }
         // Dictionary<string, Customer> listofCustomers = new Dictionary<string, Customer>();
+        CustomerRepository cuRepo = new CustomerRepository();
         public Dictionary<string, Customer> listOfCustomers { get; set; }
-
         public Customer()
         {
 
@@ -71,9 +71,42 @@ namespace PrettyHair1
             return custExists;
         }
 
-        public void RegisterCustomer(string phone)
+        public bool RegisterCustomer(string firstName, string lastName, string phone)
         {
+            bool isRegistered = false;
+            if (Exists(phone) == false)
+            {
+                cuRepo.Create(firstName, lastName, phone);
+                isRegistered = true;
+            }
+            return isRegistered;
 
+        }
+        public bool CheckPhoneNumberForSomethingDifferentThanDigits(string phone)
+        {
+            List<char> numbers = new List<char> { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+            bool IsOnlyInts = true;
+            foreach (char digit in phone)
+            {
+                if (numbers.Contains(digit) == false)
+                {
+                    IsOnlyInts = false;
+                }
+            }
+            return IsOnlyInts;
+        }
+        public bool CheckName(string name)
+        {
+            List<char> letters = new List<char> { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'æ', 'ø', 'å', ' ' };
+            bool IsOnlyLetters = true;
+            foreach (char character in name)
+            {
+                if (letters.Contains(character) == false)
+                {
+                    IsOnlyLetters = false;
+                }
+            }
+            return IsOnlyLetters;
         }
     }
 }

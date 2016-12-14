@@ -37,6 +37,9 @@ namespace PrettyHair1
             }
         }
 
-        
+        public void Delete(string phone)
+        {
+            listofCustomers.Remove(phone);
+        }
     }
 }

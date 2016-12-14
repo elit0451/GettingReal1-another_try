@@ -13,6 +13,7 @@ namespace PrettyHairTest
         public void SetuoForTest()
         {
             customer = new Customer();
+            
         }
 
         [TestMethod]
@@ -86,6 +87,15 @@ namespace PrettyHairTest
             Assert.IsFalse(customer.Exists(customer.Phone));
         }
 
+        [TestMethod]
+        public void ShouldInsertACustomer()
+        {
+            customer.Phone = "00 00 00 08";
+            if (customer.Exists(customer.Phone) == false)
+            {
+                Assert.IsTrue(customer.RegisterCustomer("Frederik", "Loan", customer.Phone));
+            }
+        }
     }
 }
 

@@ -66,7 +66,13 @@ namespace PrettyHairTest
 
             Assert.AreEqual(1, repoCu.CountCustomers());
 
-            //repoCu
+            Customer ben = repoCu.Create("Ben", "Mortensen", "11 23 65 47");
+
+            Assert.AreEqual(2, repoCu.CountCustomers());
+
+            repoCu.Delete("11 23 65 47");
+
+            Assert.AreEqual(1, repoCu.CountCustomers());
         }
     }
 }
