@@ -96,6 +96,7 @@ namespace PrettyHairTest
                 Assert.IsTrue(customer.RegisterCustomer("Frederik", "Loan", customer.Phone));
             }
         }
+        
     }
 }
 

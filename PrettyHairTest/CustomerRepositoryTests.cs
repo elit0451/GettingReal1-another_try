@@ -12,7 +12,7 @@ namespace PrettyHairTest
         }
 
         [TestMethod]
-        public void Clear()
+        public void ClearRepo()
         {
             CustomerRepository repoCu = CreateRepositoryCu();
             repoCu.Clear();

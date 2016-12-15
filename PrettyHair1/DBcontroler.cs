@@ -18,11 +18,11 @@ namespace PrettyHair1
             SqlConnection conn = getConnection();
             try
             {
-                SqlCommand command = new SqlCommand("spInsertCustomer", conn);
+                SqlCommand command = new SqlCommand("SP_INSERT_CUSTOMER", conn);
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.Add(new SqlParameter("@firstName", customer.FirstName));
-                command.Parameters.Add(new SqlParameter("@lastName", customer.LastName));
-                command.Parameters.Add(new SqlParameter("@phone", customer.Phone));
+                command.Parameters.Add(new SqlParameter("@FIRST_NAME", customer.FirstName));
+                command.Parameters.Add(new SqlParameter("@LAST_NAME", customer.LastName));
+                command.Parameters.Add(new SqlParameter("@PHONE_NUMBER", customer.Phone));
                 command.ExecuteNonQuery();
             }
             catch (SqlException e)
@@ -42,7 +42,7 @@ namespace PrettyHair1
             using (SqlConnection conn = getConnection())
             {
 
-                using (SqlCommand phoneFromDbToList = new SqlCommand("SELECT phone FROM GREAL_CUSTOMER", conn))
+                using (SqlCommand phoneFromDbToList = new SqlCommand("SELECT PHONE_NUMBER FROM CUSTOMER", conn))
                 {
                     using (SqlDataReader reader = phoneFromDbToList.ExecuteReader())
                     {

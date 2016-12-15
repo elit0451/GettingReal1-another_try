@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace PrettyHair1
 {
@@ -12,6 +8,7 @@ namespace PrettyHair1
         public void Clear()
         {
             listofCustomers.Clear();
+            
         }
         public int CountCustomers()
         {
@@ -41,5 +38,7 @@ namespace PrettyHair1
         {
             listofCustomers.Remove(phone);
         }
+
+        
     }
 }

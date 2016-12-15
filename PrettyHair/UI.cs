@@ -98,14 +98,14 @@ namespace PrettyHair
             {
                 string openingSentence = "Enter the " + parameter + " of the customer:";
                 Console.WriteLine(openingSentence);
-                input = Console.ReadLine();
+                input = customer.ChangeName(Console.ReadLine());
                 switch (parameter)
                 {
                     case "first name":
-                        isParOK = customer.CheckName(input);
+                        isParOK = customer.CheckName(input.ToLower());
                         break;
                     case "last name":
-                        isParOK = customer.CheckName(input);
+                        isParOK = customer.CheckName(input.ToLower());
                         break;
                     case "telephone number":
                         isParOK = true;
@@ -135,7 +135,7 @@ namespace PrettyHair
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 con.Open();
-                SqlCommand cmdGetAllCustomers = new SqlCommand("GetCustomers", con);
+                SqlCommand cmdGetAllCustomers = new SqlCommand("SP_SHOW_ALL_CUSTOMERS", con);
                 cmdGetAllCustomers.CommandType = CommandType.StoredProcedure;
 
                 SqlDataReader reader = cmdGetAllCustomers.ExecuteReader();
@@ -144,9 +144,9 @@ namespace PrettyHair
                 {
                     while (reader.Read())
                     {
-                        string CustomerLastName = reader["LastName"].ToString();
-                        string CustomerFirstName = reader["FirstName"].ToString();
-                        string CustomerPhoneNumber = reader["Phone"].ToString();
+                        string CustomerLastName = reader["LAST_NAME"].ToString();
+                        string CustomerFirstName = reader["FIRST_NAME"].ToString();
+                        string CustomerPhoneNumber = reader["PHONE_NUMBER"].ToString();
 
                         Console.WriteLine("First name -" + " " + CustomerFirstName);
                         Console.WriteLine("Last name -" + " " + CustomerLastName);
