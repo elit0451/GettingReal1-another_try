@@ -8,40 +8,41 @@ namespace PrettyHairTest
     public class CustomerTests
     {
         private Customer customer;
+        private CustomerRepository cuRepo;
 
         [TestInitialize]
-        public void SetuoForTest()
+        public void SetupForTest()
         {
             customer = new Customer();
-            
+            cuRepo = new CustomerRepository();
         }
 
         [TestMethod]
         public void ShouldCapitalizeFirstLetterInTheName()
         {
             customer.FirstName = "nina";
-            Assert.AreEqual("Nina", customer.ChangeName(customer.FirstName));
+            Assert.AreEqual("Nina", Customer.ChangeName(customer.FirstName));
         }
 
         [TestMethod]
         public void ShouldCapitalizeEveryWord()
         {
             customer.FirstName = "anna maria";
-            Assert.AreEqual("Anna Maria", customer.ChangeName(customer.FirstName));
+            Assert.AreEqual("Anna Maria", Customer.ChangeName(customer.FirstName));
         }
 
         [TestMethod]
         public void ShouldCapitalizeFirstLetterButKeepTheRestLower()
         {
             customer.FirstName = "isAbella";
-            Assert.AreEqual("Isabella", customer.ChangeName(customer.FirstName));
+            Assert.AreEqual("Isabella", Customer.ChangeName(customer.FirstName));
         }
 
         [TestMethod]
         public void ShouldCapitalizeFirstLetterButKeepTheRestLowerOnEveryWord()
         {
             customer.LastName = "fLOyd gREen";
-            Assert.AreEqual("Floyd Green", customer.ChangeName(customer.LastName));
+            Assert.AreEqual("Floyd Green", Customer.ChangeName(customer.LastName));
         }
 
 
@@ -49,51 +50,51 @@ namespace PrettyHairTest
         public void ShouldSeparateEachPairOfNumbers()
         {
             customer.Phone = "22340942";
-            Assert.AreEqual("22 34 09 42", customer.SplitPhoneNumber(customer.Phone));
+            Assert.AreEqual("22 34 09 42", Customer.SplitPhoneNumber(customer.Phone));
         }
 
         [TestMethod]
         public void PhoneNumberHasWrongFormat()
         {
             customer.Phone = "29870";
-            Assert.IsFalse(customer.CheckPhoneNumberFormat(customer.Phone));
+            Assert.IsFalse(Customer.CheckPhoneNumberFormat(customer.Phone));
         }
 
         [TestMethod]
         public void PhoneNumberHasGoodFormat()
         {
             customer.Phone = "74980225";
-            Assert.IsTrue(customer.CheckPhoneNumberFormat(customer.Phone));
+            Assert.IsTrue(Customer.CheckPhoneNumberFormat(customer.Phone));
         }
 
         [TestMethod]
         public void ShouldDeleteWhiteSpacesFromTheImput()
         {
             customer.Phone = "223 4094 2";
-            Assert.AreEqual("22 34 09 42", customer.SplitPhoneNumber(customer.Phone));
+            Assert.AreEqual("22 34 09 42", Customer.SplitPhoneNumber(customer.Phone));
         }
 
         [TestMethod]
         public void ShouldNotInsertACustomerIfThePhoneIsTheSame()
         {
             customer.Phone = "12 34 56 78";
-            Assert.IsTrue(customer.Exists(customer.Phone));
+            Assert.IsTrue(cuRepo.Exists(customer.Phone));
         }
 
         [TestMethod]
         public void ShouldInsertACustomerIfThePhoneIsDifferent()
         {
             customer.Phone = "44 44 44 44";
-            Assert.IsFalse(customer.Exists(customer.Phone));
+            Assert.IsFalse(cuRepo.Exists(customer.Phone));
         }
 
         [TestMethod]
         public void ShouldInsertACustomer()
         {
             customer.Phone = "00 00 00 08";
-            if (customer.Exists(customer.Phone) == false)
+            if (cuRepo.Exists(customer.Phone) == false)
             {
-                Assert.IsTrue(customer.RegisterCustomer("Frederik", "Loan", customer.Phone));
+                Assert.IsTrue(cuRepo.RegisterCustomer("Frederik", "Loan", customer.Phone));
             }
         }
         

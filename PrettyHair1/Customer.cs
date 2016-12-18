@@ -10,11 +10,10 @@ namespace PrettyHair1
         public string FirstName { get; set; }
         public string LastName { get; set; }
         // Dictionary<string, Customer> listofCustomers = new Dictionary<string, Customer>();
-        CustomerRepository cuRepo = new CustomerRepository();
         public Dictionary<string, Customer> listOfCustomers { get; set; }
         public Customer()
         {
-
+            
         }
         public Customer(string firstName, string lastName, string phone)
         {
@@ -22,7 +21,7 @@ namespace PrettyHair1
             LastName = lastName;
             Phone = phone;
         }
-        public string ChangeName(string name)
+        public static string ChangeName(string name)
         {
             string holdingWord = "";
             string[] words = name.Split(' ');
@@ -34,55 +33,29 @@ namespace PrettyHair1
             }
             return holdingWord.Trim();
         }
-        public string SplitPhoneNumber(string phone)
+        public static string SplitPhoneNumber(string phone)
         {
             phone = phone.Replace(" ", String.Empty);
-            string number = phone.Insert(6, " ");
-            number = number.Insert(4, " ");
-            number = number.Insert(2, " ");
+            string number = "";
+            if (CheckPhoneNumberFormat(phone) == true)
+            {
+                number = phone.Insert(6, " ");
+                number = number.Insert(4, " ");
+                number = number.Insert(2, " ");
+            }
             return number;
         }
-        public bool CheckPhoneNumberFormat(string phone)
+        public static bool CheckPhoneNumberFormat(string phone)
         {
             bool IsEnoughLength = true;
             if (phone.Replace(" ", String.Empty).Length != 8)
             {
                 IsEnoughLength = false;
             }
-            else
-            {
-                IsEnoughLength = true;
-            }
             return IsEnoughLength;
         }
 
-        public bool Exists(string phone)
-        {
-            DBcontroler dbc = new DBcontroler();
-            bool custExists = false;
-            List<string> listOfPhonesFromDB = dbc.GetPhonesFromDB();
-            foreach (string phoneNumber in listOfPhonesFromDB)
-            {
-                if (phoneNumber == phone)
-                {
-                    custExists = true;
-                }
-            }
-            return custExists;
-        }
-
-        public bool RegisterCustomer(string firstName, string lastName, string phone)
-        {
-            bool isRegistered = false;
-            if (Exists(phone) == false)
-            {
-                cuRepo.Create(firstName, lastName, phone);
-                isRegistered = true;
-            }
-            return isRegistered;
-
-        }
-        public bool CheckPhoneNumberForSomethingDifferentThanDigits(string phone)
+        public static bool CheckPhoneNumberForSomethingDifferentThanDigits(string phone)
         {
             List<char> numbers = new List<char> { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
             bool IsOnlyInts = true;
@@ -95,7 +68,7 @@ namespace PrettyHair1
             }
             return IsOnlyInts;
         }
-        public bool CheckName(string name)
+        public static bool CheckName(string name)
         {
             List<char> letters = new List<char> { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'æ', 'ø', 'å', ' ' };
             bool IsOnlyLetters = true;

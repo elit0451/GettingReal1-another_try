@@ -39,6 +39,30 @@ namespace PrettyHair1
             listofCustomers.Remove(phone);
         }
 
-        
+        public bool RegisterCustomer(string firstName, string lastName, string phone)
+        {
+            bool isRegistered = false;
+            if (Exists(phone) == false)
+            {
+                Create(firstName, lastName, phone);
+                isRegistered = true;
+            }
+            return isRegistered;
+        }
+
+        public bool Exists(string phone)
+        {
+            DBcontroler dbc = new DBcontroler();
+            bool custExists = false;
+            List<string> listOfPhonesFromDB = dbc.GetPhonesFromDB();
+            foreach (string phoneNumber in listOfPhonesFromDB)
+            {
+                if (phoneNumber == phone)
+                {
+                    custExists = true;
+                }
+            }
+            return custExists;
+        }
     }
 }

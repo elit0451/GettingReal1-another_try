@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 using System.Collections.Generic;
 
@@ -34,6 +35,36 @@ namespace PrettyHair1
                 conn.Close();
                 conn.Dispose();
             }
+        }
+
+        public void InsertAppointment(Appointment appointment)
+        {
+            SqlConnection conn = getConnection();
+            try
+            {
+                SqlCommand command = new SqlCommand("SP_INSERT_APPOINTMENT", conn);
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.Add(new SqlParameter("@APPOINTMENT_DATE", appointment.Date));
+                command.Parameters.Add(new SqlParameter("@START_TIME", appointment.StartTime));
+                command.Parameters.Add(new SqlParameter("@END_TIME", appointment.EndTime));
+                command.Parameters.Add(new SqlParameter("@NOTES", appointment.Notes));
+                command.Parameters.Add(new SqlParameter("@PHONE_NUMBER", appointment.Customer.Phone));
+                command.ExecuteNonQuery();
+                Console.WriteLine("Done!");
+            }
+            catch (SqlException e)
+            {
+                if (e.Number == 2627)
+                {
+                    Console.WriteLine("You already have an appointment with that start time!");
+                }
+            }
+            finally
+            {
+                conn.Close();
+                conn.Dispose();
+            }
+
         }
 
         public List<string> GetPhonesFromDB()
