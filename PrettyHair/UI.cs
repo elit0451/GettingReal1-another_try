@@ -10,6 +10,7 @@ namespace PrettyHair
     public class UI
     {
         public CustomerRepository cuRepo = new CustomerRepository();
+        public AppointmentRepository appointRepo = new AppointmentRepository();
         string openingHour = "11:00";
         string closingHour = "18:00";
         private static string connectionString = "Server=ealdb1.eal.local;Database=EJL67_DB;User ID=ejl67_usr;Password=Baz1nga67";
@@ -22,9 +23,9 @@ namespace PrettyHair
         public void Run()
         {
             RefreshCuRepository();
+            RefreshAppRepository();
             Menu();
         }
-
         private int ChooseACommand()
         {
             Console.WriteLine("Commands:");
@@ -34,7 +35,11 @@ namespace PrettyHair
             Console.WriteLine("4) Make new appointment");
             Console.WriteLine("5) Show all appointments");
             Console.WriteLine("6) Show available time");
-            Console.WriteLine("10) End program");
+            Console.WriteLine("7) Change the appointment");
+            Console.WriteLine("8) Show all appointments of a customer");
+            Console.WriteLine("9) Delete an appointment of a customer");
+            Console.WriteLine("10) Show all appointments a specific day");
+            Console.WriteLine("11) End program");
             Console.WriteLine();
             Console.WriteLine("Please choose a command:");
 
@@ -72,11 +77,24 @@ namespace PrettyHair
                     case 6:
                         ShowAvailableTimeForThatDay();
                         break;
+                    case 7:
+                        ChangeAppointmentDateTime();
+                        break;
+                    case 8:
+                        SearchAppointmentByCustomerPhone();
+                        break;
+                    case 9:
+                        DeleteAppointment();
+                        break;
+                    case 10:
+                        ShowAppointmentsForASpecificDay();
+                        break;
+
                     /* case 7: SearchByLastName(); break;
                      case 9:
                          Customers(); break;
                          */
-                    case 10:
+                    case 11:
                         isRunning = false;
                         break;
                     default:
@@ -257,6 +275,31 @@ namespace PrettyHair
                 }
             }
         }
+        public void RefreshAppRepository()
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+                SqlCommand cmdShowAllAppointments = new SqlCommand("SP_SHOW_ALL_APPOINTMENTS", con);
+                cmdShowAllAppointments.CommandType = CommandType.StoredProcedure;
+
+                SqlDataReader reader = cmdShowAllAppointments.ExecuteReader();
+
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        DateTime appointmentDate = Convert.ToDateTime(reader["APPOINTMENT_DATE"]);
+                        string appointmentStartTime = reader["START_TIME"].ToString();
+                        string appointmentEndTime = reader["END_TIME"].ToString();
+                        string appointmentNotes = reader["NOTES"].ToString();
+                        string customerPhone = reader["PHONE_NUMBER"].ToString();
+                        appointRepo.Create(appointmentDate, appointmentStartTime, appointmentEndTime, appointmentNotes, customerPhone);
+                    }
+                }
+            }
+        }
+
         private void ShowAllAppointments()
         {
             using (SqlConnection con = new SqlConnection(connectionString))
@@ -286,6 +329,43 @@ namespace PrettyHair
             }
         }
 
+        private void ShowAppointmentsForASpecificDay()
+        {
+            Console.Write("Date (dd-mm-yyyy): ");
+            DateTime date = Convert.ToDateTime(Console.ReadLine());
+            ShowAllAppointmentsForThatDat(date);
+        }
+
+        private void ShowAllAppointmentsForThatDat(DateTime date)
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+                SqlCommand cmdShowAppointmentsByDate = new SqlCommand("SHOW_APPOINTMENTS_BY_DATE", con);
+                cmdShowAppointmentsByDate.CommandType = CommandType.StoredProcedure;
+
+                cmdShowAppointmentsByDate.Parameters.Add(new SqlParameter("@APPOINTMENT_DATE", date));
+
+                SqlDataReader reader = cmdShowAppointmentsByDate.ExecuteReader();
+
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        DateTime appointmentDate = Convert.ToDateTime(reader["APPOINTMENT_DATE"]);
+                        string appointmentStartTime = reader["START_TIME"].ToString();
+                        string appointmentEndTime = reader["END_TIME"].ToString();
+                        string appointmentNotes = reader["NOTES"].ToString();
+                        string customerPhone = reader["PHONE_NUMBER"].ToString();
+
+                        Console.WriteLine("Customer : " + cuRepo.Load(customerPhone).FirstName + " " + cuRepo.Load(customerPhone).LastName);
+                        ShowAppointInfo(appointmentDate.ToString("dd-MM-yyyy"), appointmentStartTime, appointmentEndTime, appointmentNotes, customerPhone);
+                    }
+                    Console.ReadKey();
+                }
+            }
+        }
+
         private void ShowAvailableTimeForThatDay()
         {
             Console.Write("Date (dd-mm-yyyy): ");
@@ -293,6 +373,7 @@ namespace PrettyHair
             ShowAvailableTime(date);
             Console.ReadKey();
         }
+
         private void ShowAvailableTime(DateTime date)
         {
             using (SqlConnection con = new SqlConnection(connectionString))
@@ -339,7 +420,9 @@ namespace PrettyHair
                 }
                 else
                 {
+                    Console.WriteLine();
                     Console.WriteLine("The day is free! Choose from 11:00 to 18:00.");
+                    Console.WriteLine();
                 }
             }
 
@@ -373,7 +456,8 @@ namespace PrettyHair
                     }
                 } while (inputCorrect == false);
                 Console.Clear();
-                cmdShowCustomerByPhone.Parameters.Add(new SqlParameter("@PHONE_NUMBER", phoneInput));
+
+                cmdShowCustomerByPhone.Parameters.Add(new SqlParameter("@PHONE_NUMBER", Customer.SplitPhoneNumber(phoneInput)));
 
                 SqlDataReader reader = cmdShowCustomerByPhone.ExecuteReader();
 
@@ -392,13 +476,154 @@ namespace PrettyHair
             }
         }
 
+        private void SearchAppointmentByCustomerPhone()
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+                SqlCommand cmdShowAppointmentByPhone = new SqlCommand("SHOW_APPOINTMENT_BY_PHONE", con);
+                cmdShowAppointmentByPhone.CommandType = CommandType.StoredProcedure;
+                string phoneInput = "";
+                bool inputCorrect = true;
+                do
+                {
+                    inputCorrect = false;
+                    Console.Clear();
+
+                    Console.WriteLine("(Press x if you want to exit.)");
+                    Console.WriteLine();
+                    Console.Write("Customer's phone number to search for appointments: ");
+                    phoneInput = Console.ReadLine();
+                    if (phoneInput.ToLower() != "x")
+                    {
+                        inputCorrect = PhoneNumberChecking(phoneInput);
+                    }
+                    else
+                    {
+                        inputCorrect = true;
+                    }
+                } while (inputCorrect == false);
+                Console.Clear();
+
+                cmdShowAppointmentByPhone.Parameters.Add(new SqlParameter("@PHONE_NUMBER", Customer.SplitPhoneNumber(phoneInput)));
+
+                SqlDataReader reader = cmdShowAppointmentByPhone.ExecuteReader();
+
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        DateTime appointmentDate = Convert.ToDateTime(reader["APPOINTMENT_DATE"]);
+                        string appointmentStartTime = reader["START_TIME"].ToString();
+                        string appointmentEndTime = reader["END_TIME"].ToString();
+                        string appointmentNotes = reader["NOTES"].ToString();
+                        string customerPhone = reader["PHONE_NUMBER"].ToString();
+
+                        Console.WriteLine("Customer : " + cuRepo.Load(customerPhone).FirstName + " " + cuRepo.Load(customerPhone).LastName);
+                        ShowAppointInfo(appointmentDate.ToString("dd-MM-yyyy"), appointmentStartTime, appointmentEndTime, appointmentNotes, customerPhone);
+                        
+                    }
+                    Console.ReadKey();
+                }
+            }
+        }
+
+        private void ChangeAppointmentDateTime()
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+                SqlCommand cmdChangeAppointmentByPhone = new SqlCommand("SP_CHANGE_APPOINTMENT_DATE_AND_TIME", con);
+                cmdChangeAppointmentByPhone.CommandType = CommandType.StoredProcedure;
+                SearchAppointmentByCustomerPhone();
+                //Console.Clear();
+                string startTime = "";
+                string endTime = "";
+                bool converted = false;
+                DateTime date;
+                DBcontroler DB = new DBcontroler();
+                DeleteAppointment();
+                do
+                {
+                    Console.Write("New date to set the appointment (dd-mm-yyyy): ");
+                    converted = DateTime.TryParse(Console.ReadLine(), out date);
+                    if (converted == false)
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("Wrong input! Try again!");
+                        Console.ReadKey();
+                        Console.Clear();
+                    }
+                } while (converted == false);
+                ShowAvailableTime(date);
+                
+                do
+                {
+                    Console.Write("New start time for the appointment (hh:mm): ");
+                    startTime = Console.ReadLine();
+
+                } while (CheckHours(startTime) == false || CheckMinutes(startTime) == false);
+                do
+                {
+                    Console.Write("New end time for the appointment (hh:mm): ");
+                    endTime = Console.ReadLine();
+                } while (CheckHours(endTime) == false || CheckMinutes(endTime) == false);
+                
+                DB.ChangeAppointment("", date, startTime, endTime);
+                Console.ReadKey();
+            }
+        }
+
+        private void DeleteAppointment()
+        {
+            bool converted = false;
+            string phoneInput = "";
+            bool inputCorrect = true;
+            DateTime date;
+            DBcontroler DB = new DBcontroler();
+            
+            do
+            {
+                Console.Write("Old date of the appointment (dd-mm-yyyy): ");
+                converted = DateTime.TryParse(Console.ReadLine(), out date);
+                if (converted == false)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Wrong input! Try again!");
+                    Console.ReadKey();
+                    Console.Clear();
+                }
+            } while (converted == false);
+            do
+            {
+                inputCorrect = false;
+                Console.Clear();
+
+                Console.WriteLine("(Press x if you want to exit.)");
+                Console.WriteLine();
+                Console.Write("Customer's phone number for the appointment: ");
+                phoneInput = Console.ReadLine();
+                if (phoneInput.ToLower() != "x")
+                {
+                    inputCorrect = PhoneNumberChecking(phoneInput);
+                }
+                else
+                {
+                    inputCorrect = true;
+                }
+            } while (inputCorrect == false);
+            Console.Clear();
+
+            DB.DeleteAppointment(phoneInput, date);
+        }
+
         public bool PhoneNumberChecking(string phone)
         {
             bool inputCorrect = true;
             if (Customer.CheckPhoneNumberFormat(phone) == false || Customer.CheckPhoneNumberForSomethingDifferentThanDigits(phone) == false)
             {
                 Error();
-                Console.WriteLine(phone);
+                //Console.WriteLine(phone);
                 inputCorrect = false;
             }
 

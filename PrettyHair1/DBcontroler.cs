@@ -28,7 +28,8 @@ namespace PrettyHair1
             }
             catch (SqlException e)
             {
-                throw e;
+                Console.WriteLine(e.Message.ToString());
+                Console.ReadKey();
             }
             finally
             {
@@ -64,7 +65,54 @@ namespace PrettyHair1
                 conn.Close();
                 conn.Dispose();
             }
+        }
 
+        public void ChangeAppointment(string phone, DateTime date, string startTime, string endTime)
+        {
+            SqlConnection conn = getConnection();
+            try
+            {
+                SqlCommand command = new SqlCommand("SP_CHANGE_APPOINTMENT_DATE_AND_TIME", conn);
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.Add(new SqlParameter("@PHONE_NUMBER", phone));
+                command.Parameters.Add(new SqlParameter("@APPOINTMENT_DATE", date));
+                command.Parameters.Add(new SqlParameter("@START_TIME", startTime));
+                command.Parameters.Add(new SqlParameter("@END_TIME", endTime));
+                command.ExecuteNonQuery();
+                Console.WriteLine("Done!");
+            }
+            catch (SqlException e)
+            {
+                Console.WriteLine(e.Message.ToString());
+                Console.ReadKey();
+            }
+            finally
+            {
+                conn.Close();
+            }
+        }
+
+        public void DeleteAppointment(string phone, DateTime date)
+        {
+            SqlConnection conn = getConnection();
+            try
+            {
+                SqlCommand command = new SqlCommand("SP_DELETE_APPOINTMENT_BY_DATE_AND_PHONE", conn);
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.Add(new SqlParameter("@PHONE_NUMBER", phone));
+                command.Parameters.Add(new SqlParameter("@APPOINTMENT_DATE", date));
+                command.ExecuteNonQuery();
+                Console.WriteLine("Done!");
+            }
+            catch (SqlException e)
+            {
+                Console.WriteLine(e.Message.ToString());
+                Console.ReadKey();
+            }
+            finally
+            {
+                conn.Close();
+            }
         }
 
         public List<string> GetPhonesFromDB()

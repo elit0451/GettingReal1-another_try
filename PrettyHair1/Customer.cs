@@ -10,7 +10,7 @@ namespace PrettyHair1
         public string FirstName { get; set; }
         public string LastName { get; set; }
         // Dictionary<string, Customer> listofCustomers = new Dictionary<string, Customer>();
-        public Dictionary<string, Customer> listOfCustomers { get; set; }
+        public Dictionary<string, Customer> ListOfCustomers { get; set; }
         public Customer()
         {
             
