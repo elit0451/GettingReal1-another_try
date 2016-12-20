@@ -542,7 +542,6 @@ namespace PrettyHair
                 bool converted = false;
                 DateTime date;
                 DBcontroler DB = new DBcontroler();
-                DeleteAppointment();
                 do
                 {
                     Console.Write("New date to set the appointment (dd-mm-yyyy): ");

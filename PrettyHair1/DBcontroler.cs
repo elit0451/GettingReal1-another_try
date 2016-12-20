@@ -99,10 +99,11 @@ namespace PrettyHair1
             {
                 SqlCommand command = new SqlCommand("SP_DELETE_APPOINTMENT_BY_DATE_AND_PHONE", conn);
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.Add(new SqlParameter("@PHONE_NUMBER", phone));
+                command.Parameters.Add(new SqlParameter("@PHONE_NUMBER", Customer.SplitPhoneNumber(phone)));
                 command.Parameters.Add(new SqlParameter("@APPOINTMENT_DATE", date));
                 command.ExecuteNonQuery();
                 Console.WriteLine("Done!");
+                Console.ReadKey();
             }
             catch (SqlException e)
             {
