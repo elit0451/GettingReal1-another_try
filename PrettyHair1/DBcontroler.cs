@@ -74,7 +74,7 @@ namespace PrettyHair1
             {
                 SqlCommand command = new SqlCommand("SP_CHANGE_APPOINTMENT_DATE_AND_TIME", conn);
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.Add(new SqlParameter("@PHONE_NUMBER", phone));
+                command.Parameters.Add(new SqlParameter("@PHONE_NUMBER", Customer.SplitPhoneNumber(phone)));
                 command.Parameters.Add(new SqlParameter("@APPOINTMENT_DATE", date));
                 command.Parameters.Add(new SqlParameter("@START_TIME", startTime));
                 command.Parameters.Add(new SqlParameter("@END_TIME", endTime));

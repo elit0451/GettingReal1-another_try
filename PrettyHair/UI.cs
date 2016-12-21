@@ -38,7 +38,7 @@ namespace PrettyHair
             Console.WriteLine("7) Change the appointment");
             Console.WriteLine("8) Show all appointments of a customer");
             Console.WriteLine("9) Delete an appointment of a customer");
-            Console.WriteLine("10) Show all appointments a specific day");
+            Console.WriteLine("10) Show all appointments for a specific day");
             Console.WriteLine("11) End program");
             Console.WriteLine();
             Console.WriteLine("Please choose a command:");
@@ -333,10 +333,10 @@ namespace PrettyHair
         {
             Console.Write("Date (dd-mm-yyyy): ");
             DateTime date = Convert.ToDateTime(Console.ReadLine());
-            ShowAllAppointmentsForThatDat(date);
+            ShowAllAppointmentsForThatDay(date);
         }
 
-        private void ShowAllAppointmentsForThatDat(DateTime date)
+        private void ShowAllAppointmentsForThatDay(DateTime date)
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
@@ -521,7 +521,7 @@ namespace PrettyHair
 
                         Console.WriteLine("Customer : " + cuRepo.Load(customerPhone).FirstName + " " + cuRepo.Load(customerPhone).LastName);
                         ShowAppointInfo(appointmentDate.ToString("dd-MM-yyyy"), appointmentStartTime, appointmentEndTime, appointmentNotes, customerPhone);
-                        
+
                     }
                     Console.ReadKey();
                 }
@@ -535,10 +535,12 @@ namespace PrettyHair
                 con.Open();
                 SqlCommand cmdChangeAppointmentByPhone = new SqlCommand("SP_CHANGE_APPOINTMENT_DATE_AND_TIME", con);
                 cmdChangeAppointmentByPhone.CommandType = CommandType.StoredProcedure;
+
                 SearchAppointmentByCustomerPhone();
                 //Console.Clear();
                 string startTime = "";
                 string endTime = "";
+                string phoneNum = "";
                 bool converted = false;
                 DateTime date;
                 DBcontroler DB = new DBcontroler();
@@ -555,7 +557,7 @@ namespace PrettyHair
                     }
                 } while (converted == false);
                 ShowAvailableTime(date);
-                
+
                 do
                 {
                     Console.Write("New start time for the appointment (hh:mm): ");
@@ -567,11 +569,18 @@ namespace PrettyHair
                     Console.Write("New end time for the appointment (hh:mm): ");
                     endTime = Console.ReadLine();
                 } while (CheckHours(endTime) == false || CheckMinutes(endTime) == false);
+                do
+                {
+                    Console.Write("Confirm customer's phone number : ");
+                    phoneNum = Console.ReadLine();
+
+                } while (PhoneNumberChecking(phoneNum) == false);
                 
-                DB.ChangeAppointment("", date, startTime, endTime);
+                DB.ChangeAppointment(phoneNum, date, startTime, endTime);
                 Console.ReadKey();
             }
         }
+        
 
         private void DeleteAppointment()
         {
@@ -580,7 +589,7 @@ namespace PrettyHair
             bool inputCorrect = true;
             DateTime date;
             DBcontroler DB = new DBcontroler();
-            
+
             do
             {
                 Console.Write("Old date of the appointment (dd-mm-yyyy): ");
