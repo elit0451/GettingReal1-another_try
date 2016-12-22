@@ -541,9 +541,12 @@ namespace PrettyHair
                 string startTime = "";
                 string endTime = "";
                 string phoneNum = "";
+                DateTime oldDate;
                 bool converted = false;
                 DateTime date;
                 DBcontroler DB = new DBcontroler();
+                Console.Write("Choose the date you want to change:");
+                oldDate = Convert.ToDateTime(Console.ReadLine());
                 do
                 {
                     Console.Write("New date to set the appointment (dd-mm-yyyy): ");
@@ -576,7 +579,7 @@ namespace PrettyHair
 
                 } while (PhoneNumberChecking(phoneNum) == false);
                 
-                DB.ChangeAppointment(phoneNum, date, startTime, endTime);
+                DB.ChangeAppointment(phoneNum, date, startTime, endTime, oldDate);
                 Console.ReadKey();
             }
         }

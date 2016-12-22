@@ -67,17 +67,19 @@ namespace PrettyHair1
             }
         }
 
-        public void ChangeAppointment(string phone, DateTime date, string startTime, string endTime)
+        public void ChangeAppointment(string phone, DateTime date, string startTime, string endTime, DateTime oldDate)
         {
             SqlConnection conn = getConnection();
             try
             {
                 SqlCommand command = new SqlCommand("SP_CHANGE_APPOINTMENT_DATE_AND_TIME", conn);
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.Add(new SqlParameter("@PHONE_NUMBER", Customer.SplitPhoneNumber(phone)));
+                //command.Parameters.Add(new SqlParameter("@PHONE_NUMBER", Customer.SplitPhoneNumber(phone)));
                 command.Parameters.Add(new SqlParameter("@APPOINTMENT_DATE", date));
                 command.Parameters.Add(new SqlParameter("@START_TIME", startTime));
                 command.Parameters.Add(new SqlParameter("@END_TIME", endTime));
+                command.Parameters.Add(new SqlParameter("@APPOINTMENT_DATE_OLD", oldDate));
+                command.Parameters.Add(new SqlParameter("@PHONE_NUMBER", Customer.SplitPhoneNumber(phone)));
                 command.ExecuteNonQuery();
                 Console.WriteLine("Done!");
             }
